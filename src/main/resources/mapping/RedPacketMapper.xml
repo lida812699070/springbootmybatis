@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shiguang.springbootmybatis.dao.RedPacketMapper">
+    <resultMap id="BaseResultMap" type="com.shiguang.springbootmybatis.entity.RedPacket">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="send_date" property="sendDate" jdbcType="TIMESTAMP"/>
+        <result column="total" property="total" jdbcType="INTEGER"/>
+        <result column="unit_amout" property="unitAmout" jdbcType="DECIMAL"/>
+        <result column="stock" property="stock" jdbcType="INTEGER"/>
+        <result column="version" property="version" jdbcType="INTEGER"/>
+        <result column="note" property="note" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_id, amount, send_date, total, unit_amout, stock, version, note
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from T_RED_PACKET
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--悲观锁解决高并发-->
+    <select id="selectByPrimaryKey2" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from T_RED_PACKET
+        where id = #{id,jdbcType=INTEGER} for update
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from T_RED_PACKET
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.shiguang.springbootmybatis.entity.RedPacket" useGeneratedKeys="true"
+            keyProperty="id">
+    insert into T_RED_PACKET (id, user_id, amount, 
+      send_date, total, unit_amout, 
+      stock, version, note
+      )
+    values (#{id,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{amount,jdbcType=DECIMAL}, 
+      #{sendDate,jdbcType=TIMESTAMP}, #{total,jdbcType=INTEGER}, #{unitAmout,jdbcType=DECIMAL}, 
+      #{stock,jdbcType=INTEGER}, #{version,jdbcType=INTEGER}, #{note,jdbcType=VARCHAR}
+      )
+  </insert>
+    <!--减库存-->
+    <update id="decreaseRedPacket">
+    update T_RED_PACKET set stock=stock-1 where id = #{id}
+    </update>
+    <!--乐观锁ABA问题-->
+    <update id="decreaseRedPacketForVersion">
+    update T_RED_PACKET set stock=stock-1 ,version=version+1
+    where id = #{id} and version=#{version}
+    </update>
+    <insert id="insertSelective" parameterType="com.shiguang.springbootmybatis.entity.RedPacket">
+        insert into T_RED_PACKET
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="amount != null">
+                amount,
+            </if>
+            <if test="sendDate != null">
+                send_date,
+            </if>
+            <if test="total != null">
+                total,
+            </if>
+            <if test="unitAmout != null">
+                unit_amout,
+            </if>
+            <if test="stock != null">
+                stock,
+            </if>
+            <if test="version != null">
+                version,
+            </if>
+            <if test="note != null">
+                note,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="sendDate != null">
+                #{sendDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="total != null">
+                #{total,jdbcType=INTEGER},
+            </if>
+            <if test="unitAmout != null">
+                #{unitAmout,jdbcType=DECIMAL},
+            </if>
+            <if test="stock != null">
+                #{stock,jdbcType=INTEGER},
+            </if>
+            <if test="version != null">
+                #{version,jdbcType=INTEGER},
+            </if>
+            <if test="note != null">
+                #{note,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.shiguang.springbootmybatis.entity.RedPacket">
+        update T_RED_PACKET
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="amount != null">
+                amount = #{amount,jdbcType=DECIMAL},
+            </if>
+            <if test="sendDate != null">
+                send_date = #{sendDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="total != null">
+                total = #{total,jdbcType=INTEGER},
+            </if>
+            <if test="unitAmout != null">
+                unit_amout = #{unitAmout,jdbcType=DECIMAL},
+            </if>
+            <if test="stock != null">
+                stock = #{stock,jdbcType=INTEGER},
+            </if>
+            <if test="version != null">
+                version = #{version,jdbcType=INTEGER},
+            </if>
+            <if test="note != null">
+                note = #{note,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.shiguang.springbootmybatis.entity.RedPacket">
+    update T_RED_PACKET
+    set user_id = #{userId,jdbcType=INTEGER},
+      amount = #{amount,jdbcType=DECIMAL},
+      send_date = #{sendDate,jdbcType=TIMESTAMP},
+      total = #{total,jdbcType=INTEGER},
+      unit_amout = #{unitAmout,jdbcType=DECIMAL},
+      stock = #{stock,jdbcType=INTEGER},
+      version = #{version,jdbcType=INTEGER},
+      note = #{note,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.shiguang.springbootmybatis.dao.UserDao">
+	<resultMap id="JsActivityFriendDetailResult" type="com.shiguang.springbootmybatis.entity.UserInfo">
+		<result column="id" property="id" jdbcType="VARCHAR" />
+		<result column="username" property="username" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="openid" property="openid" jdbcType="VARCHAR" />
+		<result column="role" property="role" jdbcType="VARCHAR" />
+	</resultMap>
+	<select id="selectByPrimaryKey" resultMap="JsActivityFriendDetailResult">
+		select * from user_info where id = #{id}
+	</select>
+
+</mapper>
